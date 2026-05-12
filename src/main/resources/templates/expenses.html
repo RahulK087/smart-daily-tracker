@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Expense Management</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+
+        .card{
+            border:none;
+            border-radius:18px;
+            backdrop-filter:blur(10px);
+        }
+
+        body{
+            background:#f1f5f9;
+        }
+
+    </style>
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+    <div class="container">
+
+        <a class="navbar-brand"
+           href="/dashboard">
+
+            Smart Tracker
+
+        </a>
+
+        <div>
+
+            <a href="/dashboard"
+               class="btn btn-outline-light me-2">
+
+                Dashboard
+
+            </a>
+
+            <a href="/tasks"
+               class="btn btn-outline-light">
+
+                Tasks
+
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<div class="container mt-5">
+    <div class="row g-4 mb-3">
+
+        <div class="col-md-4">
+
+            <div class="card shadow border-0 p-3p-3">
+
+                <h5>
+                    Monthly Budget
+                </h5>
+
+                <h3>
+                    ₹ <span th:text="${monthlyBudget}"></span>
+                </h3>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card shadow border-0 p-3">
+
+                <h5>
+                    Total Expense
+                </h5>
+
+                <h3 class="text-danger">
+                    ₹ <span th:text="${totalExpense}"></span>
+                </h3>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card shadow border-0 p-3">
+
+                <h5>
+                    Remaining Budget
+                </h5>
+
+                <h3 class="text-success">
+                    ₹ <span th:text="${remainingBudget}"></span>
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row g-4 mb-3">
+
+        <div class="col-md-4">
+
+            <div class="card shadow border-0 p-3">
+
+                <h5>
+                    Food Budget
+                </h5>
+
+                <p>
+                    Limit:
+                    ₹ <span th:text="${foodLimit}"></span>
+                </p>
+
+                <p>
+                    Used:
+                    ₹ <span th:text="${foodUsed}"></span>
+                </p>
+
+                <p class="text-success">
+                    Remaining:
+                    ₹ <span th:text="${foodRemaining}"></span>
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card shadow border-0 p-3">
+
+                <h5>
+                    Transport Budget
+                </h5>
+
+                <p>
+                    Limit:
+                    ₹ <span th:text="${transportLimit}"></span>
+                </p>
+
+                <p>
+                    Used:
+                    ₹ <span th:text="${transportUsed}"></span>
+                </p>
+
+                <p class="text-success">
+                    Remaining:
+                    ₹ <span th:text="${transportRemaining}"></span>
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card shadow border-0 p-3">
+
+                <h5>
+                    Entertainment Budget
+                </h5>
+
+                <p>
+                    Limit:
+                    ₹ <span th:text="${entertainmentLimit}"></span>
+                </p>
+
+                <p>
+                    Used:
+                    ₹ <span th:text="${entertainmentUsed}"></span>
+                </p>
+
+                <p class="text-success">
+                    Remaining:
+                    ₹ <span th:text="${entertainmentRemaining}"></span>
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+    <div class="card shadow p-3 mb-3">
+
+        <h4 class="mb-3">
+            Update Monthly Budget
+        </h4>
+
+        <form action="/updateBudget"
+              method="post">
+
+            <div class="row">
+
+                <div class="col-md-9">
+
+                    <input type="number"
+                           name="budget"
+                           class="form-control"
+                           placeholder="Enter Monthly Budget"
+                           required>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <button class="btn btn-dark w-100">
+
+                        Update
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="card shadow p-3 mb-3">
+
+        <h5 class="mb-3">
+            Budget Usage
+        </h5>
+
+        <div class="progress"
+             style="height:30px;">
+
+            <div class="progress-bar bg-danger"
+                 role="progressbar"
+                 th:style="'width:' + ${budgetPercentage} + '%'">
+
+            <span th:text="${#numbers.formatDecimal(budgetPercentage,1,1)} + '%'">
+            </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h2>
+            Expense Management
+        </h2>
+
+    </div>
+
+    <div class="card shadow p-3">
+
+        <form th:action="@{/saveExpense}"
+              th:object="${expense}"
+              method="post">
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Expense Title
+                </label>
+
+                <input type="text"
+                       th:field="*{title}"
+                       class="form-control"
+                       required>
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Amount
+                </label>
+
+                <input type="number"
+                       step="0.01"
+                       th:field="*{amount}"
+                       class="form-control"
+                       required>
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Category
+                </label>
+
+                <select th:field="*{category}"
+                        class="form-select">
+
+                    <option value="Food">
+                        Food
+                    </option>
+
+                    <option value="Transport">
+                        Transport
+                    </option>
+
+                    <option value="Rent">
+                        Rent
+                    </option>
+
+                    <option value="Entertainment">
+                        Entertainment
+                    </option>
+
+                    <option value="Others">
+                        Others
+                    </option>
+
+                </select>
+
+            </div>
+
+            <button type="submit"
+                    class="btn btn-primary w-100">
+
+                Add Expense
+
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="card shadow p-3 mt-3">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <h3>
+                All Expenses
+            </h3>
+
+            <h5 class="text-success">
+
+                Total:
+                ₹ <span th:text="${totalExpense}"></span>
+
+            </h5>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-hover">
+
+                <thead class="table-dark">
+
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                <tr th:each="expense : ${expenses}">
+
+                    <td th:text="${expense.id}"></td>
+
+                    <td th:text="${expense.title}"></td>
+
+                    <td>
+                        ₹ <span th:text="${expense.amount}"></span>
+                    </td>
+
+                    <td th:text="${expense.category}"></td>
+
+                    <td th:text="${expense.expenseDate}"></td>
+                    <td>
+
+                    <span th:if="${expense.warning}"
+                            class="badge bg-danger">
+
+                            Limit Exceeded
+
+                    </span>
+                        <span th:unless="${expense.warning}"
+                              class="badge bg-success">
+
+                            Safe
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <a th:href="@{/deleteExpense/{id}(id=${expense.id})}"
+                           class="btn btn-danger btn-sm">
+
+                            Delete
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
